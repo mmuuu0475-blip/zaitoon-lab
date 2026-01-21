@@ -146,11 +146,16 @@
 </div>
 
 <script>
-    // الرابط الذي ستحصل عليه بعد رفع كود الوسيط على Vercel
-    const PROXY_API_URL = const PROXY_API_URL = "/api/upload"; 
+    // تم تصحيح الرابط هنا ليعمل مباشرة مع Vercel
+    const PROXY_API_URL = "/api/upload"; 
 
-    function openM() { document.getElementById('modal').style.display='flex'; }
-    function closeM() { document.getElementById('modal').style.display='none'; }
+    function openM() { 
+        document.getElementById('modal').style.display = 'flex'; 
+    }
+    
+    function closeM() { 
+        document.getElementById('modal').style.display = 'none'; 
+    }
 
     async function upload() {
         const fileInput = document.getElementById('f');
@@ -172,28 +177,28 @@
 
         reader.onload = async function() {
             const content = reader.result.split(',')[1];
-            const fileName = nameInput.replace(/\s+/g, '_') + "." + file.name.split('.').pop();
+            // تنظيف اسم الملف من المسافات
+            const fileName = nameInput.trim().replace(/\s+/g, '_') + "." + file.name.split('.').pop();
 
             try {
-                // الإرسال للوسيط (Proxy) لضمان الخصوصية
                 const response = await fetch(PROXY_API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         fileName: fileName,
-                        fileContent: content,
-                        authKey: "20231107" // مفتاح بسيط للتحقق داخل الوسيط فقط
+                        fileContent: content
                     })
                 });
 
                 if (response.ok) {
-                    alert("✅ اكتمل الرفع الآمن بنجاح!");
+                    alert("✅ اكتمل الرفع الآمن بنجاح إلى مستودع LAPS!");
                     location.reload();
                 } else {
-                    alert("❌ فشل الرفع: تأكد من إعدادات الوسيط.");
+                    const errorData = await response.json();
+                    alert("❌ فشل الرفع: " + (errorData.message || "خطأ في السيرفر"));
                 }
             } catch (error) {
-                alert("⚠️ خطأ في الاتصال بالبوابة الآمنة.");
+                alert("⚠️ خطأ في الاتصال بالبوابة الآمنة. تأكد من وجود ملف api/upload.js");
             } finally {
                 btn.disabled = false;
                 btn.innerText = "بدء الرفع المباشر";
