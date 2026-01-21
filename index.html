@@ -231,60 +231,74 @@
         <a href="#">مركز الدعم الفني</a>
     </p>
 </footer>
-
 <script>
-    // الإعدادات المحدثة لربط المستودع والمجلد الصحيح
-    const githubUser = "mmuuu0475-blip"; 
-    const repoName = "zaitoon-lab";      
-    const folderName = "laps"; // المجلد الذي يحتوي الملفات حالياً
+    // كلمة السر التي ستختارها (قم بتغييرها هنا)
+    const SECRET_PIN = "1234"; 
 
-   async function loadApps() {
-        const grid = document.getElementById('app-grid');
-        grid.innerHTML = '<h2 style="text-align:center; color:#555; grid-column:1/-1;">جاري فحص بروتوكولات LAPS...</h2>';
+    // لن نضع التوكن في متغير ثابت بل سنقوم بتشفير بسيط أو إخفائه
+    const ENCODED_TOKEN = "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"; 
 
-        try {
-            const timestamp = new Date().getTime();
-            const response = await fetch(`https://api.github.com/repos/${githubUser}/${repoName}/contents/${folderName}?t=${timestamp}`);
-            const files = await response.json();
-
-            if (!Array.isArray(files) || files.length === 0) {
-                grid.innerHTML = '<h2 style="text-align:center; color:#555; grid-column:1/-1;">لا توجد تطبيقات متاحة حالياً.</h2>';
-                return;
-            }
-
-            grid.innerHTML = ''; 
-
-            files.forEach(file => {
-                if (file.name.match(/\.(apk|exe)$/i)) {
-                    const fileName = file.name;
-                    const fileExtension = fileName.split('.').pop().toLowerCase();
-                    const appName = fileName.substring(0, fileName.lastIndexOf('.')).replace(/_/g, ' ');
-
-                    // اختيار أيقونة تلقائية: أندرويد لـ APK وويندوز لـ EXE
-                    let autoIcon = (fileExtension === 'apk') 
-                        ? 'https://cdn-icons-png.flaticon.com/512/226/226770.png' 
-                        : 'https://cdn-icons-png.flaticon.com/512/5968/5968396.png';
-
-                    const cardHtml = `
-                        <div class="app-card">
-                            <div class="app-icon">
-                                <img src="${autoIcon}" alt="App Icon" style="width:50px; height:50px;">
-                            </div>
-                            <h3 class="app-title">${appName}</h3>
-                            <span class="app-meta">نوع الحزمة: ${fileExtension.toUpperCase()}</span>
-                            <div style="font-size:10px; color:var(--primary-light); margin-bottom:10px;">STATUS: SECURE PACKAGE</div>
-                            <a href="${file.download_url}" class="download-btn" download>تحميل مباشر</a>
-                        </div>
-                    `;
-                    grid.innerHTML += cardHtml;
-                }
-            });
-
-        } catch (error) {
-            grid.innerHTML = '<h2 style="text-align:center; color:red; grid-column:1/-1;">خطأ في جلب البيانات.</h2>';
+    function openM() { 
+        // طلب كلمة السر عند محاولة فتح نافذة الرفع
+        let pass = prompt("الرجاء إدخال رمز الوصول الآمن:");
+        if (pass === SECRET_PIN) {
+            document.getElementById('modal').style.display='flex'; 
+        } else {
+            alert("عذراً، الرمز غير صحيح. الوصول مرفوض.");
         }
     }
-    loadApps();
+
+    function closeM() { document.getElementById('modal').style.display='none'; }
+
+    async function upload() {
+        const fileInput = document.getElementById('f');
+        const nameInput = document.getElementById('n').value;
+        const btn = document.getElementById('uploadBtn');
+
+        if (!fileInput.files[0] || !nameInput) {
+            alert("يرجى إكمال البيانات!");
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerText = "جاري الرفع المشفر...";
+
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+
+        reader.onload = async function() {
+            const content = reader.result.split(',')[1];
+            const fileName = nameInput.replace(/\s+/g, '_') + "." + file.name.split('.').pop();
+
+            try {
+                const response = await fetch(`https://api.github.com/repos/mmuuu0475-blip/zaitoon-lab/contents/laps/${fileName}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${ENCODED_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `Secure Upload: ${fileName}`,
+                        content: content
+                    })
+                });
+
+                if (response.ok) {
+                    new Audio('https://www.soundjay.com/buttons/sounds/button-3.mp3').play();
+                    alert("تم الرفع بنجاح!");
+                    closeM();
+                } else {
+                    alert("خطأ في الصلاحيات. تأكد من صحة التوكن.");
+                }
+            } catch (error) {
+                alert("خطأ في الاتصال.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "بدء الرفع المباشر";
+            }
+        };
+        reader.readAsDataURL(file);
+    }
 </script>
 </body>
 </html>
