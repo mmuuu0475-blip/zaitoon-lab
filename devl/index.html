@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zaitoon Lab | متجر التطبيقات الرسمي (Core Engine)</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-dark: #1e5c20; /* Darker Green */
+            --primary-light: #4caf50; /* Lighter Green */
+            --accent-blue: #2196f3;   /* For tech details */
+            --text-dark: #2c3e50;
+            --text-light: #ecf0f1;
+            --bg-light: #f5f7fa;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --border-light: rgba(255, 255, 255, 0.4);
+            --shadow-light: rgba(0, 0, 0, 0.08);
+            --shadow-dark: rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Hero Section - The Grand Entrance */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-light) 100%);
+            color: var(--text-light);
+            padding: 100px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%); /* Smooth bottom curve */
+        }
+
+        .hero-section::before { /* Subtle background pattern for tech feel */
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cuc2hhcGUuY29tL3ByZXNldmlldyI+PHBhdGggZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIwLjA1IiBkPSJNMjEgMEgyMHYyMGgyMVYwSDIwek0wIDIzYzEgMCAxIDAgMCAwczAgMS0xIDFnMjMgMmgxYy0xIDAtMSAwIDAtMC0xLTItMi0yIDAtMi0xLTEtMS00LTEtNC0xLTEyLTEtMTIgLTExYy0xLTEgMS0xLTQgMXMtMTAgMC0xMC0xLTItMS0yLTF6bTE2IDloLTJ2MiAzIDMgMyAxMiAwIDAtMSAwIDItMyAyLTUtMi01LS02LTItNi00LTMtNHptMTIgMiAxMiAwIDAtMSAwLTItMi0zLTQtMi00LTQtMy01LTItNy0yLTcxeiIvPjwvc3ZnPg==');
+            opacity: 0.3;
+            z-index: 0;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .hero-content h1 {
+            font-size: 3.8rem;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            font-weight: 700;
+        }
+        .hero-content p {
+            font-size: 1.4rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        .hero-button {
+            display: inline-block;
+            background: white;
+            color: var(--primary-dark);
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 8px 20px var(--shadow-dark);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .hero-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px var(--shadow-dark);
+        }
+
+        /* Main Content Grid - Where apps are displayed */
+        .main-container {
+            max-width: 1200px;
+            margin: -50px auto 80px; /* Overlap with hero section */
+            padding: 0 20px;
+            position: relative;
+            z-index: 1; /* Keep content above hero's background */
+        }
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        /* App Card - Glassmorphism & Tech-infused */
+        .app-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px); /* Glass effect */
+            border: 1px solid var(--border-light);
+            border-radius: 25px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px var(--shadow-light);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .app-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 18px 45px var(--shadow-dark);
+        }
+        .app-card::before { /* Subtle internal glow */
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at top left, rgba(255,255,255,0.1), transparent 50%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .app-icon {
+            width: 80px; height: 80px;
+            border-radius: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+            background-color: white; /* Fallback */
+            display: inline-flex; /* To center icon better */
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .app-icon img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+        .app-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            color: var(--text-dark);
+        }
+        .app-meta {
+            font-size: 0.95rem;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            display: block;
+        }
+        .download-btn {
+            display: block;
+            background: var(--primary-dark);
+            color: var(--text-light);
+            padding: 12px 25px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.05rem;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+        .download-btn:hover {
+            background: var(--primary-light);
+            transform: translateY(-3px);
+        }
+        
+        /* Developer Portal Link - Subtle but accessible */
+        .dev-link {
+            text-align: center;
+            margin-top: 60px;
+            font-size: 1.1rem;
+        }
+        .dev-link a {
+            color: var(--primary-dark);
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 2px solid var(--primary-dark);
+            padding-bottom: 2px;
+            transition: color 0.3s ease, border-color 0.3s ease;
+        }
+        .dev-link a:hover {
+            color: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        /* Footer - Legal & Copyright */
+        footer {
+            background: var(--primary-dark);
+            color: var(--text-light);
+            padding: 40px 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        footer a {
+            color: var(--text-light);
+            text-decoration: none;
+            margin: 0 10px;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        footer a:hover { opacity: 1; }
+        .footer-logo {
+            width: 40px; height: 40px; border-radius: 8px; margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero-section">
+    <div class="hero-content">
+        <h1>Zaitoon Lab</h1>
+        <p>المنصة الموحدة لتوزيع البرمجيات. حلول مدعومة بتقنيات Core Engine و Secure Protocol.</p>
+        <a href="#app-grid" class="hero-button">استكشف مكتبة التطبيقات</a>
+    </div>
+</div>
+
+<div class="main-container">
+    <div class="app-grid" id="app-grid">
+        </div>
+</div>
+
+<div class="dev-link">
+    <p>هل أنت مطور؟ <a href="developer.html">انضم إلى مجتمع Zaitoon Lab Dev</a></p>
+</div>
+
+<footer>
+    <img src="icon.png" alt="Zaitoon Lab Logo" class="footer-logo">
+    <p>بواسطة فريق Zaitoon Lab الهندسي. <br> جميع الحقوق محفوظة &copy; 2026</p>
+    <p>
+        <a href="#">سياسة الخصوصية</a> | 
+        <a href="#">شروط الخدمة</a> | 
+        <a href="#">مركز الدعم الفني</a>
+    </p>
+</footer>
+
+<script>
+    // GitHub API configuration
+    const githubUser = "mmuuu0475-blip"; // غير هذا لاسم مستخدم GitHub الخاص بك
+    const repoName = "zaitoon-lab";      // غير هذا لاسم مستودعك
+
+    async function loadApps() {
+        const grid = document.getElementById('app-grid');
+        grid.innerHTML = '<h2 style="text-align:center; color:#555;">تحميل قاعدة البيانات...</h2>'; // Loading state
+
+        try {
+            const response = await fetch(`https://api.github.com/repos/${githubUser}/${repoName}/contents/uploads`);
+            const files = await response.json();
+
+            if (!Array.isArray(files) || files.length === 0) {
+                grid.innerHTML = '<h2 style="text-align:center; color:#555;">لا توجد تطبيقات متاحة حالياً.</h2>';
+                return;
+            }
+
+            grid.innerHTML = ''; // Clear loading message
+
+            files.forEach(file => {
+                const fileName = file.name;
+                const fileExtension = fileName.split('.').pop().toUpperCase();
+                const appName = fileName.replace(`.${fileExtension.toLowerCase()}`, ''); // Clean app name
+
+                let iconSrc = 'icon.png'; // Default icon
+                // Check for a custom icon (e.g., appName.png or appName.jpg in uploads folder)
+                // This would require a more complex API call or a specific naming convention
+                // For simplicity, we use the default icon.png for now.
+
+                const cardHtml = `
+                    <div class="app-card">
+                        <div class="app-icon"><img src="${iconSrc}" alt="${appName} Icon"></div>
+                        <h3 class="app-title">${appName}</h3>
+                        <span class="app-meta">نوع الملف: ${fileExtension} | إصدار: 1.0.0</span>
+                        <a href="${file.download_url}" class="download-btn">تحميل آمن ومشفّر</a>
+                    </div>
+                `;
+                grid.innerHTML += cardHtml;
+            });
+
+        } catch (error) {
+            console.error("Error fetching apps from GitHub:", error);
+            grid.innerHTML = '<h2 style="text-align:center; color:red;">خطأ في تحميل التطبيقات. يرجى المحاولة لاحقاً.</h2>';
+        }
+    }
+
+    loadApps();
+</script>
+</body>
+</html>
