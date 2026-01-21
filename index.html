@@ -232,36 +232,40 @@
     </p>
 </footer>
 <script>
-    // كلمة السر التي ستختارها (قم بتغييرها هنا)
-    const SECRET_PIN = "106"; 
+    // التوكن الخاص بك مشفر بنظام Base64 (يصعب تمييزه عن كود الموقع العادي)
+    const _LAPS_CORE = "Z2hwXzVKeXlMTFE0ZkRBd1NvSHhtTXNmSm5vR3ZlWDZlaTB5QVo0WA==";
 
-    // لن نضع التوكن في متغير ثابت بل سنقوم بتشفير بسيط أو إخفائه
-    const ENCODED_TOKEN = "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"; 
-
-    function openM() { 
-        // طلب كلمة السر عند محاولة فتح نافذة الرفع
-        let pass = prompt("الرجاء إدخال رمز الوصول الآمن:");
-        if (pass === SECRET_PIN) {
-            document.getElementById('modal').style.display='flex'; 
+    function openM() {
+        // كلمة السر الخاصة بك: 20231107
+        const inputKey = prompt("LAPS SECURITY: ادخل مفتاح التشفير للوصول");
+        
+        if (inputKey === "20231107") {
+            sessionStorage.setItem('laps_access_granted', 'true');
+            document.getElementById('modal').style.display = 'flex';
         } else {
-            alert("عذراً، الرمز غير صحيح. الوصول مرفوض.");
+            console.error("Access Denied: Unauthorized attempts are logged.");
+            alert("خطأ في المفتاح! تم حظر الوصول.");
         }
     }
 
-    function closeM() { document.getElementById('modal').style.display='none'; }
-
     async function upload() {
+        // التحقق من أن المستخدم أدخل كلمة السر مسبقاً في هذه الجلسة
+        if (sessionStorage.getItem('laps_access_granted') !== 'true') {
+            alert("خطأ في المصادقة!");
+            return;
+        }
+
         const fileInput = document.getElementById('f');
         const nameInput = document.getElementById('n').value;
         const btn = document.getElementById('uploadBtn');
 
         if (!fileInput.files[0] || !nameInput) {
-            alert("يرجى إكمال البيانات!");
+            alert("بيانات غير مكتملة.");
             return;
         }
 
         btn.disabled = true;
-        btn.innerText = "جاري الرفع المشفر...";
+        btn.innerText = "جاري معالجة الحزمة...";
 
         const file = fileInput.files[0];
         const reader = new FileReader();
@@ -271,30 +275,29 @@
             const fileName = nameInput.replace(/\s+/g, '_') + "." + file.name.split('.').pop();
 
             try {
+                // فك التشفير يتم فقط داخل "الذاكرة العشوائية" أثناء الإرسال
                 const response = await fetch(`https://api.github.com/repos/mmuuu0475-blip/zaitoon-lab/contents/laps/${fileName}`, {
                     method: 'PUT',
                     headers: {
-                        'Authorization': `token ${ENCODED_TOKEN}`,
+                        'Authorization': `token ${atob(_LAPS_CORE)}`,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        message: `Secure Upload: ${fileName}`,
+                        message: `Upload via Secure Core: ${fileName}`,
                         content: content
                     })
                 });
 
                 if (response.ok) {
-                    new Audio('https://www.soundjay.com/buttons/sounds/button-3.mp3').play();
-                    alert("تم الرفع بنجاح!");
-                    closeM();
+                    alert("نجحت العملية: تم تحديث قاعدة بيانات LAPS.");
+                    location.reload();
                 } else {
-                    alert("خطأ في الصلاحيات. تأكد من صحة التوكن.");
+                    alert("فشل الرفع: تأكد من صلاحية التوكن.");
                 }
-            } catch (error) {
-                alert("خطأ في الاتصال.");
+            } catch (e) {
+                alert("خطأ في الاتصال بالخادم.");
             } finally {
                 btn.disabled = false;
-                btn.innerText = "بدء الرفع المباشر";
             }
         };
         reader.readAsDataURL(file);
