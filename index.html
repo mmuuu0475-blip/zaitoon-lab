@@ -219,7 +219,7 @@
 </div>
 
 <div class="dev-link">
-    <p>هل أنت مطور؟ <a href="developer.html">انضم إلى مجتمع Zaitoon Lab Dev</a></p>
+    <p>هل أنت مطور؟ <a href="devl/index.html">انقر هنا للدخول إلى بوابة المطورين</a></p>
 </div>
 
 <footer>
@@ -233,49 +233,55 @@
 </footer>
 
 <script>
-    // GitHub API configuration
-    const githubUser = "mmuuu0475-blip"; // غير هذا لاسم مستخدم GitHub الخاص بك
-    const repoName = "zaitoon-lab";      // غير هذا لاسم مستودعك
+    // الإعدادات المحدثة لربط المستودع والمجلد الصحيح
+    const githubUser = "mmuuu0475-blip"; 
+    const repoName = "zaitoon-lab";      
+    const folderName = "laps"; // المجلد الذي يحتوي الملفات حالياً
 
     async function loadApps() {
         const grid = document.getElementById('app-grid');
-        grid.innerHTML = '<h2 style="text-align:center; color:#555;">تحميل قاعدة البيانات...</h2>'; // Loading state
+        grid.innerHTML = '<h2 style="text-align:center; color:#555; grid-column:1/-1;">جاري فحص بروتوكولات LAPS...</h2>';
 
         try {
-            const response = await fetch(`https://api.github.com/repos/${githubUser}/${repoName}/contents/uploads`);
+            // إضافة طابع زمني لمنع التخزين المؤقت (Cache) وضمان رؤية الملفات الجديدة فوراً
+            const timestamp = new Date().getTime();
+            const response = await fetch(`https://api.github.com/repos/${githubUser}/${repoName}/contents/${folderName}?t=${timestamp}`);
             const files = await response.json();
 
             if (!Array.isArray(files) || files.length === 0) {
-                grid.innerHTML = '<h2 style="text-align:center; color:#555;">لا توجد تطبيقات متاحة حالياً.</h2>';
+                grid.innerHTML = '<h2 style="text-align:center; color:#555; grid-column:1/-1;">لا توجد تطبيقات متاحة حالياً في المستودع.</h2>';
                 return;
             }
 
-            grid.innerHTML = ''; // Clear loading message
+            grid.innerHTML = ''; // مسح رسالة التحميل
 
             files.forEach(file => {
-                const fileName = file.name;
-                const fileExtension = fileName.split('.').pop().toUpperCase();
-                const appName = fileName.replace(`.${fileExtension.toLowerCase()}`, ''); // Clean app name
+                // تصفية الملفات لإظهار APK و EXE فقط وتجاهل الملفات الأخرى
+                if (file.name.match(/\.(apk|exe)$/i)) {
+                    const fileName = file.name;
+                    const fileExtension = fileName.split('.').pop().toUpperCase();
+                    const appName = fileName.substring(0, fileName.lastIndexOf('.')).replace(/_/g, ' ');
 
-                let iconSrc = 'icon.png'; // Default icon
-                // Check for a custom icon (e.g., appName.png or appName.jpg in uploads folder)
-                // This would require a more complex API call or a specific naming convention
-                // For simplicity, we use the default icon.png for now.
-
-                const cardHtml = `
-                    <div class="app-card">
-                        <div class="app-icon"><img src="${iconSrc}" alt="${appName} Icon"></div>
-                        <h3 class="app-title">${appName}</h3>
-                        <span class="app-meta">نوع الملف: ${fileExtension} | إصدار: 1.0.0</span>
-                        <a href="${file.download_url}" class="download-btn">تحميل آمن ومشفّر</a>
-                    </div>
-                `;
-                grid.innerHTML += cardHtml;
+                    const cardHtml = `
+                        <div class="app-card">
+                            <div class="app-icon"><img src="icon.png" alt="${appName} Icon"></div>
+                            <h3 class="app-title">${appName}</h3>
+                            <span class="app-meta">نوع الملف: ${fileExtension} | معرف: ZTN-${Math.floor(Math.random()*900)}</span>
+                            <a href="${file.download_url}" class="download-btn" download>تحميل آمن ومشفّر</a>
+                        </div>
+                    `;
+                    grid.innerHTML += cardHtml;
+                }
             });
+
+            // إذا لم يتم العثور على أي ملفات مطابقة بعد التصفية
+            if (grid.innerHTML === '') {
+                grid.innerHTML = '<h2 style="text-align:center; color:#555; grid-column:1/-1;">لا توجد ملفات بصيغة APK أو EXE حالياً.</h2>';
+            }
 
         } catch (error) {
             console.error("Error fetching apps from GitHub:", error);
-            grid.innerHTML = '<h2 style="text-align:center; color:red;">خطأ في تحميل التطبيقات. يرجى المحاولة لاحقاً.</h2>';
+            grid.innerHTML = '<h2 style="text-align:center; color:red; grid-column:1/-1;">خطأ في الاتصال بالسيرفر. يرجى التحقق من اتصال الإنترنت.</h2>';
         }
     }
 
