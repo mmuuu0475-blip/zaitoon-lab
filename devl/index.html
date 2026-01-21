@@ -3,205 +3,289 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zaitoon Lab | Enterprise Portal v4.1</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>Zaitoon Lab | متجر التطبيقات الرسمي (Core Engine)</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --main-green: #2e7d32;
-            --soft-green: #e8f5e9;
-            --text-main: #2c3e50;
-            --bg-body: #f8fafc;
-            --white: #ffffff;
-            --border: #e2e8f0;
-            --accent-blue: #0284c7;
+            --primary-dark: #1e5c20; /* Darker Green */
+            --primary-light: #4caf50; /* Lighter Green */
+            --accent-blue: #2196f3;   /* For tech details */
+            --text-dark: #2c3e50;
+            --text-light: #ecf0f1;
+            --bg-light: #f5f7fa;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --border-light: rgba(255, 255, 255, 0.4);
+            --shadow-light: rgba(0, 0, 0, 0.08);
+            --shadow-dark: rgba(0, 0, 0, 0.15);
         }
 
         body {
-            margin: 0; font-family: 'Cairo', sans-serif;
-            background-color: var(--bg-body); color: var(--text-main);
+            margin: 0;
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            overflow-x: hidden;
             line-height: 1.6;
         }
 
-        header {
-            background: var(--white); padding: 50px 20px; text-align: center;
-            border-bottom: 1px solid var(--border);
-            background-image: radial-gradient(#2e7d3211 1px, transparent 1px);
-            background-size: 20px 20px;
+        /* Hero Section - The Grand Entrance */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-light) 100%);
+            color: var(--text-light);
+            padding: 100px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%); /* Smooth bottom curve */
         }
 
-        .hero-title { font-size: 3.5rem; font-weight: 800; color: var(--main-green); margin: 0; letter-spacing: -1px; }
-        .tech-desc { max-width: 850px; margin: 15px auto; font-size: 1.1rem; color: #64748b; }
-
-        .action-area { display: flex; justify-content: center; margin-top: -45px; position: relative; z-index: 10; }
-        .plus-btn {
-            width: 90px; height: 90px; background: var(--main-green); color: white;
-            border: 8px solid var(--bg-body); border-radius: 30px; font-size: 45px;
-            cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 25px rgba(46, 125, 50, 0.2);
+        .hero-section::before { /* Subtle background pattern for tech feel */
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cuc2hhcGUuY29tL3ByZXNldmlldyI+PHBhdGggZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIwLjA1IiBkPSJNMjEgMEgyMHYyMGgyMVYwSDIwek0wIDIzYzEgMCAxIDAgMCAwczAgMS0xIDFnMjMgMmgxYy0xIDAtMSAwIDAtMC0xLTItMi0yIDAtMi0xLTEtMS00LTEtNC0xLTEyLTEtMTIgLTExYy0xLTEgMS0xLTQgMXMtMTAgMC0xMC0xLTItMS0yLTF6bTE2IDloLTJ2MiAzIDMgMyAxMiAwIDAtMSAwIDItMyAyLTUtMi01LS02LTItNi00LTMtNHptMTIgMiAxMiAwIDAtMSAwLTItMi0zLTQtMi00LTQtMy01LTItNy0yLTcxeiIvPjwvc3ZnPg==');
+            opacity: 0.3;
+            z-index: 0;
         }
-        .plus-btn:hover { transform: scale(1.1) rotate(90deg); }
-
-        .grid-container {
-            max-width: 1200px; margin: 60px auto; padding: 0 20px;
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px;
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .hero-content h1 {
+            font-size: 3.8rem;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            font-weight: 700;
+        }
+        .hero-content p {
+            font-size: 1.4rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        .hero-button {
+            display: inline-block;
+            background: white;
+            color: var(--primary-dark);
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 8px 20px var(--shadow-dark);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .hero-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px var(--shadow-dark);
         }
 
+        /* Main Content Grid - Where apps are displayed */
+        .main-container {
+            max-width: 1200px;
+            margin: -50px auto 80px; /* Overlap with hero section */
+            padding: 0 20px;
+            position: relative;
+            z-index: 1; /* Keep content above hero's background */
+        }
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        /* App Card - Glassmorphism & Tech-infused */
         .app-card {
-            background: var(--white); border: 1px solid var(--border); border-radius: 28px;
-            padding: 35px; transition: 0.4s; position: relative; overflow: hidden;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px); /* Glass effect */
+            border: 1px solid var(--border-light);
+            border-radius: 25px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px var(--shadow-light);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+            position: relative;
+            overflow: hidden;
         }
-        .app-card::before { content: ""; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--main-green); opacity: 0; transition: 0.3s; }
-        .app-card:hover { transform: translateY(-10px); border-color: var(--main-green); box-shadow: 0 25px 50px rgba(0,0,0,0.06); }
-        .app-card:hover::before { opacity: 1; }
-
-        .app-status {
-            font-size: 11px; font-weight: 800; background: var(--soft-green);
-            color: var(--main-green); padding: 5px 15px; border-radius: 50px;
-            display: inline-block; margin-bottom: 15px; text-transform: uppercase;
+        .app-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 18px 45px var(--shadow-dark);
         }
-
-        .download-link {
-            display: block; width: 100%; padding: 14px; background: var(--main-green);
-            color: white; text-align: center; text-decoration: none; border-radius: 16px;
-            font-weight: bold; margin-top: 25px; transition: 0.3s;
-        }
-        .download-link:hover { filter: brightness(1.1); transform: scale(1.02); }
-
-        .info-section { 
-            max-width: 1100px; margin: 60px auto; padding: 50px; 
-            background: #f1f5f9; border-radius: 35px; border: 1px solid var(--border);
-            color: #475569; font-size: 0.9rem;
+        .app-card::before { /* Subtle internal glow */
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at top left, rgba(255,255,255,0.1), transparent 50%);
+            z-index: 0;
+            pointer-events: none;
         }
 
-        .tech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; font-family: monospace; }
-        .tech-item { background: #fff; padding: 10px; border-radius: 10px; border: 1px solid #e2e8f0; }
-
-        #modal {
-            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(12px); display: none; justify-content: center; align-items: center; z-index: 1000;
+        .app-icon {
+            width: 80px; height: 80px;
+            border-radius: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+            background-color: white; /* Fallback */
+            display: inline-flex; /* To center icon better */
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
         }
-        .modal-box {
-            background: white; width: 480px; padding: 45px; border-radius: 40px;
-            box-shadow: 0 50px 100px rgba(0,0,0,0.2);
+        .app-icon img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+        .app-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            color: var(--text-dark);
+        }
+        .app-meta {
+            font-size: 0.95rem;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            display: block;
+        }
+        .download-btn {
+            display: block;
+            background: var(--primary-dark);
+            color: var(--text-light);
+            padding: 12px 25px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.05rem;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+        .download-btn:hover {
+            background: var(--primary-light);
+            transform: translateY(-3px);
+        }
+        
+        /* Developer Portal Link - Subtle but accessible */
+        .dev-link {
+            text-align: center;
+            margin-top: 60px;
+            font-size: 1.1rem;
+        }
+        .dev-link a {
+            color: var(--primary-dark);
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 2px solid var(--primary-dark);
+            padding-bottom: 2px;
+            transition: color 0.3s ease, border-color 0.3s ease;
+        }
+        .dev-link a:hover {
+            color: var(--accent-blue);
+            border-color: var(--accent-blue);
         }
 
-        input, select {
-            width: 100%; padding: 16px; margin: 12px 0; border: 1px solid var(--border);
-            border-radius: 15px; background: #f8fafc; font-family: 'Cairo';
+        /* Footer - Legal & Copyright */
+        footer {
+            background: var(--primary-dark);
+            color: var(--text-light);
+            padding: 40px 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        footer a {
+            color: var(--text-light);
+            text-decoration: none;
+            margin: 0 10px;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        footer a:hover { opacity: 1; }
+        .footer-logo {
+            width: 40px; height: 40px; border-radius: 8px; margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
 
-<header>
-    <div style="margin-bottom: 10px;"><span style="background: #dcfce7; color: #166534; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;">LAPS CORE ACTIVE</span></div>
-    <div class="hero-title">Zaitoon Lab</div>
-    <p class="tech-desc">
-        النظام المركزي لإدارة وتوزيع الحزم البرمجية (LAPS). نطبق معايير تقنية متقدمة لفحص الأكواد ثنائياً، مما يضمن بيئة تشغيل معزولة ومحمية لمستخدمينا في كافة القطاعات التقنية.
+<div class="hero-section">
+    <div class="hero-content">
+        <h1>Zaitoon Lab</h1>
+        <p>المنصة الموحدة لتوزيع البرمجيات. حلول مدعومة بتقنيات Core Engine و Secure Protocol.</p>
+        <a href="#app-grid" class="hero-button">استكشف مكتبة التطبيقات</a>
+    </div>
+</div>
+
+<div class="main-container">
+    <div class="app-grid" id="app-grid">
+        </div>
+</div>
+
+<div class="dev-link">
+    <p>هل أنت مطور؟ <a href="devl/index.html">انقر هنا للدخول إلى بوابة المطورين</a></p>
+</div>
+
+<footer>
+    <img src="icon.png" alt="Zaitoon Lab Logo" class="footer-logo">
+    <p>بواسطة فريق medrani dz الهندسي. <br> جميع الحقوق محفوظة &copy; 2026</p>
+    <p>
+        <a href="#">سياسة الخصوصية</a> | 
+        <a href="#">شروط الخدمة</a> | 
+        <a href="#">مركز الدعم الفني</a>
     </p>
-    <div style="font-size: 11px; color: #94a3b8; font-family: monospace; background: #eee; display: inline-block; padding: 5px 15px; border-radius: 10px;">
-        NODE_ID: ZT-99X | SHARDS: 12 | ENCRYPTION: AES-256-GCM
-    </div>
-</header>
-
-<div class="action-area">
-    <button class="plus-btn" onclick="openM()">+</button>
-</div>
-
-<div class="grid-container" id="grid"></div>
-
-<div class="info-section">
-    <h3 style="color: var(--text-main); margin-top: 0;">بروتوكول التشغيل (LAPS Protocol)</h3>
-    <p>بصفتك مستخدماً أو مطوراً داخل مختبرات زيتون، فأنت تتعامل مع بنية تحتية مشفرة بالكامل. يتم تخزين الملفات في مستودع <strong>LAPS</strong> المخصص لضمان سرعة الاستجابة.</p>
-    
-    <div class="tech-grid">
-        <div class="tech-item">● SHA-256 Checksum Verification: Enabled</div>
-        <div class="tech-item">● Binary Sandboxing: Active</div>
-        <div class="tech-item">● CDN Edge Delivery: Global</div>
-        <div class="tech-item">● Real-time Threat Audit: Monitoring</div>
-    </div>
-    
-    <div style="margin-top: 30px; border-top: 1px solid #cbd5e1; pt-20; text-align: center;">
-        <p>هل تحتاج إلى الوصول لمنطقة المطورين؟ <a href="./devl/index.html" style="color: var(--main-green); font-weight: bold; text-decoration: none;">انقر هنا للدخول إلى DEVL PORTAL</a></p>
-    </div>
-</div>
-
-<div id="modal">
-    <div class="modal-box">
-        <h2 style="margin-top:0;">إيداع حزمة برمجية</h2>
-        <p style="font-size: 14px; color: #64748b;">سيتم توجيه الملف إلى وحدة الفحص <strong>LAPS</strong> تلقائياً عبر API.</p>
-        
-        <input type="text" id="n" placeholder="اسم التطبيق (ID)">
-        <select id="t">
-            <option value="apk">Mobile Binary (APK)</option>
-            <option value="exe">Desktop Binary (EXE)</option>
-        </select>
-        <input type="file" id="f" accept=".apk,.exe">
-        
-        <div id="uploadStatus" style="display:none; font-size:12px; color:var(--main-green); text-align:center; margin:10px 0;">جاري الرفع التلقائي...</div>
-
-        <button id="uploadBtn" onclick="upload()" style="width:100%; padding:18px; background:var(--main-green); color:white; border:none; border-radius:18px; font-weight:bold; cursor:pointer; margin-top:15px; font-size:16px;">بدء الرفع المباشر</button>
-        <button onclick="closeM()" style="width:100%; background:none; border:none; color:#94a3b8; cursor:pointer; margin-top:15px;">إلغاء الأمر</button>
-    </div>
-</div>
+</footer>
 
 <script>
-    // الرابط الذي ستحصل عليه بعد رفع كود الوسيط على Vercel
-    const PROXY_API_URL = "https://zaitoon-lab-proxy.vercel.app/api/upload"; 
+    // الإعدادات المحدثة لربط المستودع والمجلد الصحيح
+    const githubUser = "mmuuu0475-blip"; 
+    const repoName = "zaitoon-lab";      
+    const folderName = "laps"; // المجلد الذي يحتوي الملفات حالياً
 
-    function openM() { document.getElementById('modal').style.display='flex'; }
-    function closeM() { document.getElementById('modal').style.display='none'; }
+    async function loadApps() {
+        const grid = document.getElementById('app-grid');
+        grid.innerHTML = '<h2 style="text-align:center; color:#555; grid-column:1/-1;">جاري فحص بروتوكولات LAPS...</h2>';
 
-    async function upload() {
-        const fileInput = document.getElementById('f');
-        const nameInput = document.getElementById('n').value;
-        const btn = document.getElementById('uploadBtn');
-        const status = document.getElementById('uploadStatus');
+        try {
+            // إضافة طابع زمني لمنع التخزين المؤقت (Cache) وضمان رؤية الملفات الجديدة فوراً
+            const timestamp = new Date().getTime();
+            const response = await fetch(`https://api.github.com/repos/${githubUser}/${repoName}/contents/${folderName}?t=${timestamp}`);
+            const files = await response.json();
 
-        if (!fileInput.files[0] || !nameInput) {
-            alert("يرجى إكمال البيانات أولاً!");
-            return;
-        }
-
-        btn.disabled = true;
-        btn.innerText = "جاري التأمين والرفع...";
-        status.style.display = "block";
-
-        const file = fileInput.files[0];
-        const reader = new FileReader();
-
-        reader.onload = async function() {
-            const content = reader.result.split(',')[1];
-            const fileName = nameInput.replace(/\s+/g, '_') + "." + file.name.split('.').pop();
-
-            try {
-                // الإرسال للوسيط (Proxy) لضمان الخصوصية
-                const response = await fetch(PROXY_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        fileName: fileName,
-                        fileContent: content,
-                        authKey: "20231107" // مفتاح بسيط للتحقق داخل الوسيط فقط
-                    })
-                });
-
-                if (response.ok) {
-                    alert("✅ اكتمل الرفع الآمن بنجاح!");
-                    location.reload();
-                } else {
-                    alert("❌ فشل الرفع: تأكد من إعدادات الوسيط.");
-                }
-            } catch (error) {
-                alert("⚠️ خطأ في الاتصال بالبوابة الآمنة.");
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "بدء الرفع المباشر";
+            if (!Array.isArray(files) || files.length === 0) {
+                grid.innerHTML = '<h2 style="text-align:center; color:#555; grid-column:1/-1;">لا توجد تطبيقات متاحة حالياً في المستودع.</h2>';
+                return;
             }
-        };
-        reader.readAsDataURL(file);
-    }
-</script>
 
+            grid.innerHTML = ''; // مسح رسالة التحميل
+
+            files.forEach(file => {
+                // تصفية الملفات لإظهار APK و EXE فقط وتجاهل الملفات الأخرى
+                if (file.name.match(/\.(apk|exe)$/i)) {
+                    const fileName = file.name;
+                    const fileExtension = fileName.split('.').pop().toUpperCase();
+                    const appName = fileName.substring(0, fileName.lastIndexOf('.')).replace(/_/g, ' ');
+
+                    const cardHtml = `
+                        <div class="app-card">
+                            <div class="app-icon"><img src="icon.png" alt="${appName} Icon"></div>
+                            <h3 class="app-title">${appName}</h3>
+                            <span class="app-meta">نوع الملف: ${fileExtension} | معرف: ZTN-${Math.floor(Math.random()*900)}</span>
+                            <a href="${file.download_url}" class="download-btn" download>تحميل آمن ومشفّر</a>
+                        </div>
+                    `;
+                    grid.innerHTML += cardHtml;
+                }
+            });
+
+            // إذا لم يتم العثور على أي ملفات مطابقة بعد التصفية
+            if (grid.innerHTML === '') {
+                grid.innerHTML = '<h2 style="text-align:center; color:#555; grid-column:1/-1;">لا توجد ملفات بصيغة APK أو EXE حالياً.</h2>';
+            }
+
+        } catch (error) {
+            console.error("Error fetching apps from GitHub:", error);
+            grid.innerHTML = '<h2 style="text-align:center; color:red; grid-column:1/-1;">خطأ في الاتصال بالسيرفر. يرجى التحقق من اتصال الإنترنت.</h2>';
+        }
+    }
+
+    loadApps();
+</script>
 </body>
 </html>
