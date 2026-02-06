@@ -98,6 +98,45 @@
             font-size: 12px;
             color: #6a737d;
         }
+        .controls-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 25px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+    align-items: center;
+    gap: 10px;
+}
+
+#appSearch {
+    padding: 10px 15px;
+    width: 250px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-family: 'Cairo', sans-serif;
+}
+
+.add-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: 'Cairo', sans-serif;
+    transition: 0.3s ease;
+}
+
+.add-button:hover {
+    background-color: #2d8a31;
+    transform: translateY(-2px);
+}
+
+.plus-icon {
+    margin-left: 8px;
+    font-size: 18px;
+}
     </style>
 </head>
 <body>
@@ -106,6 +145,16 @@
     <header>
         <h1>Zaitoon Lab - Download Center</h1>
         <p>الإصدارات الرسمية والآمنة لتطبيقات Madrani DZ</p>
+        <div class="controls-bar">
+    <div class="search-box">
+        <input type="text" id="appSearch" onkeyup="searchTable()" placeholder="🔍 ابحث عن تطبيق أو نظام...">
+    </div>
+    
+    <button class="add-button" onclick="triggerFileInput()">
+        <span class="plus-icon">+</span> إضافة تطبيق للمستودع
+    </button>
+    <input type="file" id="fileInput" style="display:none" onchange="handleFileUpload(this)">
+</div>
     </header>
 
     <div class="content">
