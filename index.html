@@ -145,15 +145,50 @@
     <header>
         <h1>Zaitoon Lab - Download Center</h1>
         <p>الإصدارات الرسمية والآمنة لتطبيقات Madrani DZ</p>
+        
         <div class="controls-bar">
-    <div class="search-box">
-        <input type="text" id="appSearch" onkeyup="searchTable()" placeholder="🔍 ابحث عن تطبيق أو نظام...">
+            <div class="search-box">
+                <input type="text" id="appSearch" onkeyup="searchTable()" placeholder="🔍 ابحث في المستودع...">
+            </div>
+            
+            <button class="add-button" onclick="triggerFileInput()">
+                <span class="plus-icon">+</span> إضافة تطبيق ذكي
+            </button>
+            <input type="file" id="fileInput" style="display:none" accept=".apk" onchange="handleFileUpload(this)">
+        </div>
+    </header>
+
+    <div class="content">
+        <div id="loadingStatus" style="display:none; text-align:center; color:var(--primary-color); font-weight:bold; margin-bottom:10px;">
+            ⏳ جاري مزامنة التطبيقات من المستودع...
+        </div>
+
+        <h3>تطبيقات المستودع والروابط الرسمية:</h3>
+        <table id="mainTable">
+            <thead>
+                <tr>
+                    <th>الرابط</th>
+                    <th>النوع</th>
+                    <th>التطبيق والنظام</th>
+                    <th>الحجم</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr>
+                    <td><a href="https://www.dropbox.com/scl/fi/hxq2egcsjp6b898ayrji3/fasterfast-madrani-palastine-gaza-QUDS.zip?dl=1" class="download-link">Download</a></td>
+                    <td>ZIP/EXE</td>
+                    <td><strong>Faster Fast</strong> (Official) 💻</td>
+                    <td>.. MB</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/mmuuu0475-blip/madrani-dz/raw/main/app-release%20(2).apk" class="download-link">Download</a></td>
+                    <td>APK</td>
+                    <td><strong>Madrani DZ</strong> (Official) 📱</td>
+                    <td>1 MB</td>
+                </tr>
+                </tbody>
+        </table>
     </div>
-    
-    <button class="add-button" onclick="triggerFileInput()">
-        <span class="plus-icon">+</span> إضافة تطبيق للمستودع
-    </button>
-    <input type="file" id="fileInput" style="display:none" onchange="handleFileUpload(this)">
 </div>
     </header>
 
@@ -217,6 +252,192 @@
     <p>بواسطة فريق medrani dz الهندسي. جميع الحقوق محفوظة © 2026</p>
     <p><a href="https://github.com/mmuuu0475-blip/zaitoon-lab" style="color: #0366d6; text-decoration: none;">المستودع الرسمي على GitHub</a></p>
 </footer>
+<script>
+/**
+ * Zaitoon Lab - Ultimate Deployment Engine v3.0
+ * تم تطويره ليكون نظاماً متكاملاً لإدارة التطبيقات عبر GitHub API
+ */
 
+const GITHUB_DB = {
+    TOKEN: "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",
+    OWNER: "mmuuu0475-blip",
+    REPO: "zaitoon-lab",
+    PATH: "uploads",
+    MAX_FILE_SIZE: 25 * 1024 * 1024
+};
+
+// 1. عند تشغيل الصفحة: جلب كافة التطبيقات المخزنة
+window.onload = async () => {
+    console.log("🚀 جاري الاتصال بمستودع Zaitoon Lab...");
+    await syncApplications();
+};
+
+async function syncApplications() {
+    const status = document.getElementById('loadingStatus');
+    status.style.display = 'block';
+    
+    try {
+        const response = await fetch(`https://api.github.com/repos/${GITHUB_DB.OWNER}/${GITHUB_DB.REPO}/contents/${GITHUB_DB.PATH}`, {
+            headers: { "Authorization": `token ${GITHUB_DB.TOKEN}` }
+        });
+
+        if (response.ok) {
+            const items = await response.json();
+            // تصفية ملفات APK فقط
+            const apks = items.filter(item => item.name.toLowerCase().endsWith('.apk'));
+            
+            for (const apk of apks) {
+                // استخراج المعلومات من اسم الملف (الاسم__النوع__المعرف.apk)
+                const parts = apk.name.replace(".apk", "").split("__");
+                const appName = parts[0] || "تطبيق غير معروف";
+                const appType = parts[1] || "APK";
+                const uniqueID = parts[2];
+
+                // البحث عن الأيقونة المرتبطة بنفس المعرف
+                const iconFile = items.find(i => i.name.includes(uniqueID) && (i.name.endsWith('.png') || i.name.endsWith('.jpg')));
+                const iconURL = iconFile ? iconFile.download_url : "https://cdn-icons-png.flaticon.com/512/226/226770.png";
+
+                renderApplicationRow(appName, appType, apk.download_url, apk.size, iconURL);
+            }
+        }
+    } catch (error) {
+        console.error("خطأ في المزامنة:", error);
+    } finally {
+        status.style.display = 'none';
+    }
+}
+
+// 2. معالجة رفع تطبيق جديد (الخطوات الثلاث: ملف -> اسم -> أيقونة)
+// متغيرات لتخزين الملفات مؤقتاً أثناء العملية
+let tempAPKFile = null;
+
+async function handleFileUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    // 1. فحص النوع والحجم
+    if (!file.name.toLowerCase().endsWith('.apk')) {
+        alert("⚠️ يرجى اختيار ملف APK فقط.");
+        return;
+    }
+
+    // 2. تخزين الملف مؤقتاً وطلب الاسم
+    tempAPKFile = file;
+    const appName = prompt("🏷️ أدخل اسم التطبيق الذي سيظهر للزوار:");
+    if (!appName) return;
+
+    const appType = prompt("📂 نوع التطبيق (مثلاً: Android):", "Android");
+
+    // 3. بدلاً من فتح النافذة تلقائياً، سنظهر للمستخدم "تنبيه" يطلب منه الضغط لاختيار الصورة
+    // هذا يكسر حماية المتصفح ويجعل العملية تعمل 100%
+    if (confirm(`تم اختيار التطبيق: ${appName}\n\nالآن اضغط 'موافق' لاختيار أيقونة التطبيق (صورة).`)) {
+        openIconPicker(appName, appType);
+    }
+}
+
+function openIconPicker(appName, appType) {
+    const iconInput = document.createElement('input');
+    iconInput.type = 'file';
+    iconInput.accept = 'image/*';
+    
+    iconInput.onchange = async (e) => {
+        const iconFile = e.target.files[0];
+        if (!iconFile) return;
+
+        await proceedToUpload(appName, appType, tempAPKFile, iconFile);
+    };
+    
+    iconInput.click();
+}
+
+async function proceedToUpload(appName, appType, apkFile, iconFile) {
+    const btn = document.querySelector(".add-button");
+    btn.innerHTML = "⏳ جاري الرفع (لا تغلق الصفحة)...";
+    btn.disabled = true;
+
+    try {
+        const uniqueID = Date.now();
+        const apkBase64 = await fileToBase64(apkFile);
+        const iconBase64 = await fileToBase64(iconFile);
+
+        // رفع الـ APK (الاسم المدمج)
+        const apkName = `${appName}__${appType}__${uniqueID}.apk`;
+        await uploadToGitHub(apkName, apkBase64);
+
+        // رفع الأيقونة (ربطها عبر ID)
+        const iconExt = iconFile.name.split('.').pop();
+        const iconName = `icon_${uniqueID}.${iconExt}`;
+        await uploadToGitHub(iconName, iconBase64);
+
+        alert("✅ مبروك! تم الرفع بنجاح والتطبيق سيظهر للجميع.");
+        location.reload(); 
+    } catch (err) {
+        alert("❌ حدث خطأ: " + err.message);
+        btn.innerHTML = "+ إضافة تطبيق ذكي";
+        btn.disabled = false;
+    }
+}
+// 3. وظيفة الرفع الفعلي لـ GitHub
+async function uploadToGitHub(fileName, content) {
+    const response = await fetch(`https://api.github.com/repos/${GITHUB_DB.OWNER}/${GITHUB_DB.REPO}/contents/${GITHUB_DB.PATH}/${fileName}`, {
+        method: "PUT",
+        headers: {
+            "Authorization": `token ${GITHUB_DB.TOKEN}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            message: `New App Upload: ${fileName}`,
+            content: content
+        })
+    });
+    if (!response.ok) throw new Error("فشل الاتصال بـ GitHub API");
+}
+
+// 4. رسم الصف في الجدول
+function renderApplicationRow(name, type, url, size, icon) {
+    const table = document.getElementById('tableBody');
+    const sizeMB = (size / (1024 * 1024)).toFixed(2) + " MB";
+    
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td><a href="${url}" class="download-link" target="_blank">Download</a></td>
+        <td><span class="badge">${type}</span></td>
+        <td>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <img src="${icon}" style="width:32px; height:32px; border-radius:6px; object-fit:cover; border:1px solid #ddd;">
+                <div>
+                    <strong>${name}</strong>
+                    <div style="font-size:11px; color:#666;">تم الرفع بواسطة المستودع</div>
+                </div>
+            </div>
+        </td>
+        <td>${sizeMB}</td>
+    `;
+    // إضافة التطبيقات الجديدة في البداية بعد التطبيقات الرسمية
+    table.appendChild(row);
+}
+
+// 5. وظائف مساعدة
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = error => reject(error);
+    });
+}
+
+function triggerFileInput() {
+    document.getElementById('fileInput').click();
+}
+
+function searchTable() {
+    const filter = document.getElementById("appSearch").value.toLowerCase();
+    const rows = document.querySelectorAll("#tableBody tr");
+    rows.forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(filter) ? "" : "none";
+    });
+}
+</script>
 </body>
 </html>
